@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_view_form" model="ir.ui.view">
+        <field name="name">res.partner.view.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet//group/group/field[@name='function']" position="after">
+                <field name="customer_code" required="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_form_inherit" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='print_quotation']" position="attributes">
+                <attribute name="string">Print PR</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="product_template_view" model="ir.ui.view">
+        <field name="name">product.template.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_tag_ids']" position="after">
+                <field name="reference_number"/>
+                <field name="initial_number"/>
+                <field name="last_updated_ref_number"/>
+            </xpath>
+            <xpath expr="//field[@name='detailed_type']" position="after">
+                <field name="product_category"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_views_inherit_invisible" model="ir.ui.view">
+        <field name="name">product.template.views.inherit.invisible</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+
+
+    <!--    <record id="product_template_view_product_changes" model="ir.ui.view">-->
+    <!--        <field name="name">product.template.view.product.changes</field>-->
+    <!--        <field name="model">product.template</field>-->
+    <!--        <field name="inherit_id" ref="account.product_template_form_view"/>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <xpath expr="//page/page/group/group/field[@name='property_account_income_id']" position="after">-->
+    <!--&lt;!&ndash;                <field name="reference_number"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;                <field name="initial_number"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;                <field name="last_updated_ref_number"/>&ndash;&gt;-->
+    <!--                <field name="product_category"/>-->
+    <!--            </xpath>-->
+    <!--        </field>-->
+    <!--    </record>-->
+
+
+    <record id="bill_of_material_form_view" model="ir.ui.view">
+        <field name="name">bill.of.material.form.view</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <!--            <xpath expr="//field[@name='type']" position="after">-->
+            <!--                <field name="is_approved"/>-->
+            <!--                <field name="to_approve"/>-->
+            <!--                <field name="is_approval_compute"/>-->
+            <!--            </xpath>-->
+
+            <!--            <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='product_id']" position="after">-->
+            <!--                <field name="to_approve" invisible="0"/>-->
+            <!--            </xpath>-->
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="button_approve" string="Approve BOM" class="btn btn-primary" type="object"
+                            groups="mrp.group_mrp_manager" attrs="{'invisible': [('state', '=', 'approved')]}"/>
+                                        <button name="wizard_open" string="Update" class="btn btn-primary" type="object"
+                    />
+                    <field name="state" widget="statusbar" statusbar_visible="to_approve,approved" readonly="1"/>
+                    <!--                                            <field name="status" widget="statusbar" statusbar_visible="to_approve,approve_1" readonly="1"/>-->
+                </header>
+            </xpath>
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="bool_check_update" required="1" invisible="1"/>
+                <field name="bool_button_update" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_production_inherit" model="ir.ui.view">
+        <field name="name">mrp.production.inherit</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bom_id']" position="attributes">
+                <attributes name="domain">[('state','=','approved')]</attributes>
+            </xpath>
+            <xpath expr="//field[@name='product_qty']" position="after">
+                <field name="bool_field"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_category_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.category.form.view.inherit</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <field name="last_updated_seq"/>
+                <field name="type"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="product_type_form_view" model="ir.ui.view">
+        <field name="name">product.type.form.view</field>
+        <field name="model">bemco.product.type</field>
+        <!--        <field name="mode">primary</field>-->
+        <field name="arch" type="xml">
+            <form string="Product Type">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="last_updated_seq"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="product_type_tree_view" model="ir.ui.view">
+        <field name="name">product.type.form.view</field>
+        <field name="model">bemco.product.type</field>
+        <!--        <field name="priority">4</field>-->
+        <field name="arch" type="xml">
+            <tree string="Quotation">
+                <field name="name"/>
+                <field name="last_updated_seq"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_product_type_action" model="ir.actions.act_window">
+        <field name="name">Product Type</field>
+        <field name="res_model">bemco.product.type</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="product_type_tree_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Generate Customer Details
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="product_type_menu" name="Type" parent="stock.menu_stock_config_settings"
+              action="action_product_type_action" sequence="20"/>
+
+</odoo>

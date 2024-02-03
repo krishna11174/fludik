@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_expenses" inherit_id="portal.portal_my_home" priority="50">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Expenses</t>
+                <t t-set="url" t-value="'/my/expense'"/>
+                <t t-set="placeholder_count" t-value="'expense_counts'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_expense_breadcrumbs" inherit_id="portal.portal_breadcrumbs">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'portal_my_expense_list_view'" class="breadcrumb-item">My Expenses</li>
+            <li t-if="page_name == 'portal_my_expense_form_view'" class="breadcrumb-item">
+                <a href="/my/expense">My Expenses</a>
+                /
+                <span t-out="expense.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="expense_list_view_portal">
+        <t t-call="portal.portal_layout">
+            <t t-if="expense" t-call="portal.portal_table">
+                <div class="container py-1">
+                    <thead class="active">
+                        <tr>
+                            <th>Expense Date</th>
+                            <th>Description</th>
+                            <th>Employee</th>
+                            <th>Paid By</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="expense" t-as="e">
+                            <tr>
+                                <td>
+                                    <span t-field="e.date"/>
+                                </td>
+                                <td>
+                                    <a t-attf-href="/my/expense/#{e.id}">
+                                        <t t-out="e.name"/>
+                                    </a>
+                                </td>
+                                <td>
+                                    <t t-out="e.employee_id.name"/>
+                                </td>
+                                <td>
+                                    <t t-out="dict(e._fields['payment_mode'].selection).get(e.payment_mode)"/>
+                                </td>
+                                <td>
+                                    <span t-field="e.total_amount_company"/>
+                                </td>
+                                <td>
+                                    <t t-out="dict(e._fields['state'].selection).get(e.state)"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </div>
+            </t>
+            <p class="py-1" t-else="">There are currently no expenses for your account.</p>
+        </t>
+    </template>
+
+    <template id="expense_form_view_portal">
+        <t t-call="portal.portal_layout">
+            <div class="container py-2">
+                <section style="width:100%;height:100%; background-color:#FFFFFF;">
+                    <div class="container" style="padding-top: 5px; text-align: right;">
+                        <t t-if="expense.state == 'draft'">
+                            <div class="btn-group" role="group" aria-label="Expense Actions">
+                                <a t-attf-href="/expense/submit/#{expense.id}" class="btn btn-secondary btn-sm"
+                                   style="margin-right: 5px;"
+                                   onclick="return confirm('Are you sure you want to Submit this Expense to Manager? After submission, you can no longer modify this expense.');">
+                                    Submit To Manager
+                                </a>
+                                <a t-attf-href="/expense/edit/#{expense.id}" class="btn btn-primary btn-sm"
+                                   style="margin-right: 5px;">Edit Expense
+                                </a>
+                                <a t-attf-href="/expense/delete/#{expense.id}" class="btn btn-danger btn-sm"
+                                   style="margin-right: 5px;"
+                                   onclick="return confirm('Are you sure you want to Delete this Expense?');">
+                                    Delete Expense
+                                </a>
+                            </div>
+                        </t>
+                        <t t-if="expense.state != 'draft'">
+                            <div style="background-color: #4a4f59; padding: 5px; border-radius: 5px; display: inline-block; margin-right: 5%; margin-top: px; color: white;">
+                                <t t-esc="dict(expense._fields['state'].selection).get(expense.state)"/>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="container py-3" style="padding-left: 5%;">
+                        <div class="row">
+                            <div class="col">
+                                <label>Description:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h4>
+                                    <span t-field="expense.name"/>
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Category:</label>
+                            </div>
+                            <div class="col-4">
+                                <span style="color: gray;" t-field="expense.product_id"/>
+                            </div>
+                            <div class="col">
+                                <label>Bill Reference:</label>
+                            </div>
+                            <div class="col-4">
+                                <span style="color: gray;" t-field="expense.reference"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                            </div>
+                            <div class="col-4">
+                                <span style="font-style: italic; color: gray;"
+                                      t-field="expense.product_id.description"/>
+                            </div>
+                            <div class="col" style="padding-top: 10px;">
+                                <label>Expense Date:</label>
+                            </div>
+                            <div class="col-4" style="padding-top: 10px;">
+                                <span style="color: gray;" t-field="expense.date"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label>Total:</label>
+                            </div>
+                            <div class="col-1">
+                                <span style="color: gray;" t-field="expense.total_amount"/>
+                            </div>
+                            <div class="col-3">
+                                <span style="color: gray;" t-field="expense.currency_id"/>
+                            </div>
+                            <div class="col">
+                                <label>Account:</label>
+                            </div>
+                            <div class="col-4">
+                                <span style="color: gray;" t-field="expense.account_id"/>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top: 10px;">
+                            <div class="col">
+                                <label>Employee:</label>
+                            </div>
+                            <div class="col-4">
+                                <span style="color: gray;" t-field="expense.employee_id"/>
+                            </div>
+                            <div class="col">
+                                <label>Paid By:</label>
+                            </div>
+                            <div class="col-4">
+                                <span style="color: gray;" t-field="expense.payment_mode"/>
+                            </div>
+                        </div>
+                        <div class="row pb-5" style="padding-top: 10px;">
+                            <div class="col">
+                                <label>Receipts:</label>
+                            </div>
+                            <div class="col-4">
+                                <div class="row">
+                                    <t t-foreach="expense.attachment_ids" t-as="receipt">
+                                        <div class="col-3">
+                                            <a t-attf-href="/web/content/#{receipt.id}?download=true">
+                                                <div class="oe_attachment_embedded o_image" t-att-title="receipt.name"
+                                                     t-att-data-mimetype="receipt.mimetype"
+                                                     t-attf-data-src="/web/image/#{receipt.id}/100x80">
+                                                </div>
+                                                <div class="oe_attachment_name"
+                                                     style="font-size: 15px; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                    <t t-esc="receipt.name.split('.')[0]"/>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label>Notes...</label>
+                            </div>
+                            <div class="col-4">
+                                <span style="color: gray;" t-field="expense.description"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container pb-5" style="padding-left: 5%; padding-right: 5%;">
+                        <h3>Send message</h3>
+                        <t t-call="portal.message_thread">
+                            <t t-set="object" t-value="expense"/>
+                        </t>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+</odoo>

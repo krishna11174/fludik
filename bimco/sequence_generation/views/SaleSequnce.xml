@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="seq_sale_order_quotation_new" model="ir.sequence">
+        <field name="name">Sale Sequence</field>
+        <field name="code">quotation.send</field>
+        <!--       <field name="prefix">HP</field>-->
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_sale_order_sale_new" model="ir.sequence">
+        <field name="name">Sale Sequence</field>
+        <field name="code">sale.order.sale</field>
+        <!--       <field name="prefix">HP</field>-->
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_purchase_quotation_sale_new" model="ir.sequence">
+        <field name="name">Purchase Quotation Sequence</field>
+        <field name="code">purchase.order.quotation</field>
+        <!--       <field name="prefix">HP</field>-->
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_purchase_orders_sale_new" model="ir.sequence">
+        <field name="name">Purchase Sequence</field>
+        <field name="code">purchase.order.order</field>
+        <!--       <field name="prefix">HP</field>-->
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+<!--    added-->
+    <record id="sale_add_field_boolaean" model="ir.ui.view">
+        <field name="name">Sale Add Boolean Field</field>
+        <field name="model">sale.order</field>
+
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="is_changed"/>
+            </xpath>
+        </field>
+    </record>
+<!--to change the string send proforma invoice-->
+    <record id="change_proforma_name_button" model="ir.ui.view">
+        <field name="name">Change proforma string name</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_quotation_send'][2]" position="replace">
+                <button name="action_quotation_send_new" type="object" string="Download PRO-FORMA Invoice"
+                        groups="sale.group_proforma_sales" class="btn-primary"
+                        attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('invoice_count','&gt;=',1)]}"
+                        context="{'proforma': True, 'validate_analytic': True}"/>
+                <button name="action_quotation_send_new" type="object" string="Download PRO-FORMA Invoice"
+                        groups="sale.group_proforma_sales"
+                        attrs="{'invisible': ['|', ('state', '=', 'draft'), ('invoice_count','&gt;=',1)]}"
+                        context="{'proforma': True, 'validate_analytic': True}"/>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][2]" position="attributes">
+                <attribute name="attrs">{'invisible':1}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_add_field_button" model="ir.ui.view">
+        <field name="name">Sale Add Button</field>
+        <field name="model">purchase.order</field>
+
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header//button[@name='action_rfq_send']" position="after">
+                <button name="req_send" type="object" string="Send For Approval" class="btn-primary"
+                        groups="sequence_generation.normal_user"
+                        attrs="{'invisible': ['|','|',('state', '=', 'purchase'),('is_req_sent','=',True),('is_verified','=',True)]}"/>
+                <button name="approval_sent" type="object" string="Approval Sent" style="background-color:white;"
+                        groups="sequence_generation.normal_user"
+                        attrs="{'invisible': ['|','|',('state', '=', 'purchase'),('is_req_sent','!=',True),('is_verified','=',True)]}"/>
+                <button name="approved" type="object" string="Approved" style="background-color:white;"
+                        attrs="{'invisible': ['|',('is_verified','!=',True),('state','=','purchase')]}"/>
+                <button name="approve_quotation" type="object" string="Approve" class="btn-primary"
+                        groups="sequence_generation.admin_user"
+                        attrs="{'invisible': ['|',('state', '=', 'purchase'),('is_verified','=',True)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='date_planned']" position="after">
+                <field name="is_verified"/>
+                <field name="is_req_sent"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="purchase_model_replace_fields" model="ir.ui.view">
+        <field name="name">purchase.order.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//span[@class='o_form_label']" position="replace">
+                <span class="o_form_label" attrs="{'invisible': [('state','not in',('draft','sent'))]}">Purchase
+                    Request
+                </span>
+            </xpath>
+
+
+
+        </field>
+    </record>
+
+
+</odoo>

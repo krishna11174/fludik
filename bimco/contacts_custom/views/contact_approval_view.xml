@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_views_inherit" model="ir.ui.view">
+        <field name="name">res.partner.views.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!--            <xpath expr="//field[@name='type']" position="after">-->
+            <!--                <field name="is_approved"/>-->
+            <!--                <field name="to_approve"/>-->
+            <!--                <field name="is_approval_compute"/>-->
+            <!--            </xpath>-->
+
+            <!--            <xpath expr="//field[@name='bom_line_ids']/tree/field[@name='product_id']" position="after">-->
+            <!--                <field name="to_approve" invisible="0"/>-->
+            <!--            </xpath>-->
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="button_approve" string="Approve Contact" class="btn btn-primary" type="object"
+                            attrs="{'invisible': [('state', '=', 'approved')]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="to_approve,approved" readonly="1"/>
+                    <!--                                            <field name="status" widget="statusbar" statusbar_visible="to_approve,approve_1" readonly="1"/>-->
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_views_inherit" model="ir.ui.view">
+        <field name="name">res.partner.views.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='mobile']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='email']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='vat']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='street']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='street2']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='state_id']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='zip']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='country_id']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='function']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='title']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='city']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="l10n_in_view_partner_form_views_inherit" model="ir.ui.view">
+        <field name="name">l10n.in.view.partner.form.views.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="l10n_in.l10n_in_view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='l10n_in_gst_treatment']" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!--    <record id="sale_order_views_inherit" model="ir.ui.view">-->
+    <!--        <field name="name">sale.order.views.inherit</field>-->
+    <!--        <field name="model">sale.order</field>-->
+    <!--        <field name="inherit_id" ref="sale.view_order_form"/>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <xpath expr="//field[@name='partner_id']" position="after">-->
+    <!--                <field name="partner_ids" invisible="0"/>-->
+    <!--            </xpath>-->
+    <!--        </field>-->
+    <!--    </record>-->
+
+    <!--    <record id="purchase_order_views_inherit" model="ir.ui.view">-->
+    <!--        <field name="name">purchase.order.views.inherit</field>-->
+    <!--        <field name="model">purchase.order</field>-->
+    <!--        <field name="inherit_id" ref="purchase.purchase_order_form"/>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <xpath expr="//field[@name='partner_id']" position="after">-->
+    <!--                <field name="partner_ids" invisible="1"/>-->
+    <!--            </xpath>-->
+    <!--        </field>-->
+    <!--    </record>-->
+
+    <!--    <record id="mrp_production_form_view_changes" model="ir.ui.view">-->
+    <!--        <field name="name">mrp.production.form.view.changes</field>-->
+    <!--        <field name="model">mrp.production</field>-->
+    <!--        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <xpath expr="//form/sheet/group/group/div/field[@name='bom_id]" position="after">-->
+    <!--                <field name="bom_ids"/>-->
+    <!--            </xpath>-->
+    <!--        </field>-->
+    <!--    </record>-->
+
+
+</odoo>

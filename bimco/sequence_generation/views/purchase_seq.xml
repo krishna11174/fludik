@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <record id="purchase_added_bool_field_fields" model="ir.ui.view">
+        <field name="name">purchase.order.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='picking_type_id']" position="after">
+                <field name="is_changed"/>
+            </xpath>
+<!--            <xpath expr="//header/field[@name='state']" position="replace">-->
+<!--                <field name="state" widget="statusbar" statusbar_visible="draft,first,sent,purchase" readonly="1"/>-->
+<!--            </xpath>-->
+        </field>
+    </record>
+
+
+</odoo>

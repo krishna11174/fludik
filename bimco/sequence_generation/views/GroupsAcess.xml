@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="normal_user" model="res.groups">
+        <field name="name">Normal users Group</field>
+    </record>
+    <record id="admin_user" model="res.groups">
+        <field name="name">Admin users Group</field>
+    </record>
+    <record id="request_for_quotation" model="res.groups">
+        <field name="name">Request For Quotation</field>
+    </record>
+
+
+    <record id="report_purchase_quotation" model="ir.actions.report">
+        <field name="name">Purchase Request</field>
+        <field name="model">purchase.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">purchase.report_purchasequotation</field>
+        <field name="report_file">purchase.report_purchasequotation</field>
+        <field name="print_report_name">'Purchase Request - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_purchase_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="purchase_approve_requests">
+        <field name="name">Purchase Requests</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">form,tree</field>
+        <field name="view_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="context">{'_default_is_req_sent':False}</field>
+        <field name="domain">[('is_req_sent','=',True)]</field>
+        <field name="target">current</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Create a new record
+            </p>
+        </field>
+    </record>
+
+
+    <menuitem
+            parent="purchase.menu_procurement_management"
+            id="purcahse_approval_menu"
+            name="Purchase Requests"
+            action="purchase_approve_requests"
+            groups="admin_user"/>
+
+</odoo>

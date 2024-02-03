@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="menu_expense_form" model="website.menu">
+            <field name="name">Create Expense</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="url">/expense</field>
+            <field name="sequence" type="int">200</field>
+        </record>
+
+        <template id="create_expense_page" name="Create Expense Page">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container">
+                        <form role="form" action="/expense/created" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="container py-5">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="name">Description*</label>
+                                    </div>
+                                    <div class="col-10">
+                                        <input style="width:56%;" type="text" class="form-control" id="name" name="name"
+                                               placeholder="e.g. Lunch with Customer" required="True"/>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 10px;">
+                                    <div class="col">
+                                        <label for="product_id">Category*</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-control" name="product_id" required="True">
+                                            <option value="">Select Category</option>
+                                            <t t-foreach="product_id" t-as="p">
+                                                <option t-att-value="p.id">
+                                                    <t t-if="p.default_code" t-esc="'['+p.default_code+']'"/>
+                                                    <t t-esc="p.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="reference">Bill Reference</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" class="form-control" id="reference" name="reference"/>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 10px;">
+                                    <div class="col">
+                                        <label for="total_amount">Total*</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input class="form-control" type="number" name="total_amount" id="total_amount"
+                                               step="0.01" min="0" required="True"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <select class="form-control" name="currency_id" required="True">
+                                            <t t-foreach="currency_id" t-as="c">
+                                                <t t-if="c.name == 'INR'">
+                                                    <option t-att-value="c.id">
+                                                        <t t-esc="c.name"/>
+                                                    </option>
+                                                </t>
+                                            </t>
+                                            <t t-foreach="currency_id" t-as="c">
+                                                <t t-if="c.name != 'INR'">
+                                                    <option t-att-value="c.id">
+                                                        <t t-esc="c.name"/>
+                                                    </option>
+                                                </t>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="date">Expense Date</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="date" class="form-control date" name="date" id="date"
+                                               t-attf-value="{{today_date}}"/>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 10px;">
+                                    <div class="col">
+                                        <label for="employee_id">Employee</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-control" name="employee_id">
+                                            <option t-att-value="user.id">
+                                                <t t-esc="user.name"/>
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="payment_mode">Paid By</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-control" name="payment_mode">
+                                            <option t-attf-value='own_account'>Employee (to reimburse)</option>
+                                            <option t-attf-value='company_account'>Company</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 10px;">
+                                    <div class="col">
+                                        <label for="attachment_ids">Attach Receipt</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="file" name="attachment_ids" multiple="true" accept="image/*, application/pdf, .doc, .docx, .txt"/>
+                                    </div>
+                                    <div class="col">
+                                        <label for="description">Notes...</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <textarea class="form-control" id="description" name="description"/>
+                                    </div>
+                                </div>
+                                <div class="clearfix oe_login_buttons" style="padding-top: 10px; text-align: center;">
+                                    <button type="submit" class="btn btn-secondary">Create Expense</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="edit_expense_page" name="Edit Expense Page">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container">
+                        <form role="form" action="/expense/edited" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="id" t-att-value="expense.id"/>
+                            <div class="container py-5">
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="name">Description*</label>
+                                    </div>
+                                    <div class="col-10">
+                                        <input style="width:56%;" type="text" class="form-control" id="name" name="name"
+                                               t-att-value="expense.name" required="True"/>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 10px;">
+                                    <div class="col">
+                                        <label for="product_id">Category*</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-control" name="product_id" required="True">
+                                            <option t-att-value="expense.product_id.id">
+                                                <t t-if="expense.product_id.default_code" t-esc="'['+expense.product_id.default_code+']'"/>
+                                                <t t-esc="expense.product_id.name"/>
+                                            </option>
+                                            <t t-foreach="product_id" t-as="p">
+                                                <t t-if="p.id != expense.product_id.id">
+                                                    <option t-att-value="p.id">
+                                                        <t t-if="p.default_code" t-esc="'['+p.default_code+']'"/>
+                                                        <t t-esc="p.name"/>
+                                                    </option>
+                                                </t>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="reference">Bill Reference</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" class="form-control" id="reference" name="reference"
+                                               t-att-value="expense.reference"/>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 10px;">
+                                    <div class="col">
+                                        <label for="total_amount">Total*</label>
+                                    </div>
+                                    <div class="col-2">
+                                        <input class="form-control" type="number" name="total_amount" id="total_amount"
+                                               step="0.01" min="0" required="True" t-att-value="expense.total_amount"/>
+                                    </div>
+                                    <div class="col-2">
+                                        <select class="form-control" name="currency_id" required="True">
+                                            <option t-att-value="expense.currency_id.id">
+                                                <t t-esc="expense.currency_id.name"/>
+                                            </option>
+                                            <t t-foreach="currency_id" t-as="c">
+                                                <t t-if="c.id != expense.currency_id.id">
+                                                    <option t-att-value="c.id">
+                                                        <t t-esc="c.name"/>
+                                                    </option>
+                                                </t>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="date">Expense Date</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="date" class="form-control date" name="date" id="date"
+                                               t-attf-value="{{expense.date}}"/>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 10px;">
+                                    <div class="col">
+                                        <label for="employee_id">Employee</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-control" name="employee_id">
+                                            <option t-att-value="user.id">
+                                                <t t-esc="user.name"/>
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label for="payment_mode">Paid By</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-control" name="payment_mode">
+                                            <option t-att-value='expense.payment_mode'>
+                                                <t t-esc="dict(expense._fields['payment_mode'].selection).get(expense.payment_mode)"/>
+                                            </option>
+                                            <t t-if="expense.payment_mode == 'own_account'">
+                                                <option t-attf-value='company_account'>Company</option>
+                                            </t>
+                                            <t t-else="">
+                                                <option t-attf-value='own_account'>Employee (to reimburse)</option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row" style="padding-top: 10px;">
+                                    <div class="col">
+                                        <label for="attachment_ids">Attach Receipt</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="row">
+                                            <t t-foreach="expense.attachment_ids" t-as="receipt">
+                                                <div class="col-3">
+                                                    <div class="oe_attachment_name" style="position: relative;">
+                                                        <a t-attf-href="/web/content/#{receipt.id}?download=true&amp;access_token=#{receipt.access_token}">
+                                                            <div class="oe_attachment_embedded o_image"
+                                                                 t-att-title="receipt.name"
+                                                                 t-att-data-mimetype="receipt.mimetype"
+                                                                 t-attf-data-src="/web/image/#{receipt.id}/100x80">
+                                                            </div>
+                                                            <div class="oe_attachment_name"
+                                                                 style="font-size: 15px; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                                                 data-show-preview="true">
+                                                                <t t-esc="receipt.name.split('.')[0]"/>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                            <input style="padding-top: 5px;" type="file" name="attachment_ids" multiple="true"
+                                                   accept="image/*"/>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <label for="description">Notes...</label>
+                                    </div>
+                                    <div class="col-4">
+                                        <textarea class="form-control" id="description" name="description"
+                                                  t-esc="expense.description"/>
+                                    </div>
+                                </div>
+                                <div class="clearfix oe_login_buttons" style="padding-top: 10px; text-align: center;">
+                                    <button type="submit" class="btn btn-secondary">Update Expense</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <record id="expense_created_thanks_page" model="website.page">
+            <field name="name">Thanks</field>
+            <field name="type">qweb</field>
+            <field name="url">/expense-created</field>
+            <field name="website_published">True</field>
+            <field name="key">hr_expense_portal.expense_created_thanks_page</field>
+            <field name="arch" type="xml">
+                <t name="Thanks" t-name="hr_expense_portal.expense_created_thanks_page">
+                    <t t-call="website.layout">
+                        <div id="wrap">
+                            <div class="container pt-4">
+                                <h1>Thanks!</h1>
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <div class="alert alert-success" role="status">
+                                            Your expense has been created successfully.
+                                        </div>
+                                        <p>
+                                            You can view your expenses in <a href="/my/expense">My Account</a> portal.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </field>
+        </record>
+
+        <template id="expense_updated_thanks_page" name="Expense Updated Thanks Page">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container pt-4">
+                        <h1>Expense Updated!</h1>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="alert alert-success" role="status">
+                                    Your expense has been updated successfully.
+                                </div>
+                                <p>
+                                    You can view your updated expense in the <a href="/my/expense">My Account</a> portal.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="expense_deleted_thanks_page" name="Expense Deleted Thanks Page">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container pt-4">
+                        <h1>Thanks!</h1>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="alert alert-success" role="status">
+                                    Your expense has been deleted successfully.
+                                </div>
+                                <p>
+                                    You can view your other expenses in the <a href="/my/expense">My Account</a> portal.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="expense_submitted_thanks_page" name="Expense Submitted Thanks Page">
+            <t t-call="website.layout">
+                <div id="wrap">
+                    <div class="container pt-4">
+                        <h1>Thanks!</h1>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="alert alert-success" role="status">
+                                    Your expense has been submitted to manager successfully.
+                                </div>
+                                <p>
+                                    You can view your expenses in the <a href="/my/expense">My Account</a> portal.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

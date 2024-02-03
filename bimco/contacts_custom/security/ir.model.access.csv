@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bemco_product_type,access.bemco.product.type,model_bemco_product_type,,1,1,1,1
+access_my_module_my_wizard,access.my.module.my.wizard.type,model_my_module_my_wizard,,1,1,1,1
+access_bom_wizard,access.bom.wizard,model_bom_my_wizard,,1,1,1,1
+

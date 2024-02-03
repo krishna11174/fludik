@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="inherit_purchase_order" inherit_id="purchase.report_purchaseorder_document">
+        <xpath expr="//div[@t-field='o.partner_id']" position="after">
+
+            <div t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone", "vat"], "no_marker": True, "phone_icons": True}'/>
+        </xpath>
+    </template>
+</odoo>

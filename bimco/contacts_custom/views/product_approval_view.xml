@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_form_inherit" model="ir.ui.view">
+        <field name="name">product.template.common.form.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header" position="before">
+                <header>
+                    <button name="button_approve" string="Approve Product" class="btn btn-primary" type="object"
+                            attrs="{'invisible': [('state', '=', 'approved')]}"/>
+<!--                    <button name="open_wizard" string="rty" type="object" class="btn btn-primary"/>-->
+                    <field name="state" widget="statusbar" statusbar_visible="to_approve,approved" readonly="1"/>
+                </header>
+            </xpath>
+            <!--            <xpath expr="//field[@name='invoice_policy']" position="after">-->
+            <!--                -->
+            <!--            </xpath>-->
+        </field>
+    </record>
+
+    <record id="purchase_order_form_button_name_change" model="ir.ui.view">
+        <field name="name">purchase.order.form.button.name.change</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <button position="attributes" name="action_rfq_send">
+                <attribute name="string">Send For Approval</attribute>
+            </button>
+            <button position="attributes" name="action_rfq_send" states="sent">
+                <attribute name="string">Re-Send For Approval</attribute>
+            </button>
+        </field>
+    </record>
+
+
+    <!--    <record id="purchase_order_views_inherit" model="ir.ui.view">-->
+    <!--        <field name="name">purchase.order.views.inherit</field>-->
+    <!--        <field name="model">purchase.order</field>-->
+    <!--        <field name="inherit_id" ref="purchase.purchase_order_form"/>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            <xpath expr="//field[@name='partner_id']" position="after">-->
+    <!--                <field name="partner_ids" invisible="1"/>-->
+    <!--            </xpath>-->
+    <!--        </field>-->
+    <!--    </record>-->
+
+    <record id="product_template_form_changes" model="ir.ui.view">
+        <field name="name">product.template.common.form.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook/page/group/field[@name='description']" position="after">
+<!--                <attribute name="on_change">{'on_product_change': [description]}</attribute>-->
+<!--                <field name="description" class="elc_tran_prob"/>-->
+                <button name="open_wizard" string="INTERNAL NOTES" type="object" class="btn btn-primary"/>
+            </xpath>
+        </field>
+    </record>
+
+<!--    <template id="assets_backend" name="custom_module assets" inherit_id="web.assets_backend">-->
+<!--        <xpath expr="." position="inside">-->
+<!--            <script type="text/javascript" src="contacts_custom/static/src/js/description_onchange.js"></script>-->
+<!--        </xpath>-->
+<!--    </template>-->
+
+<!--    <record id="des_field_change" model="ir.actions.client">-->
+<!--        <field name="name">Description Field Change</field>-->
+<!--        <field name="tag">des_field_change</field>-->
+<!--        <field name="target">new</field>-->
+<!--    </record>-->
+    <record id="action_open_wizard" model="ir.actions.client">
+        <field name="name">Open Wizard</field>
+        <field name="tag">contacts_custom.open_wizard</field>
+        <field name="params">{}</field>
+    </record>
+
+</odoo>

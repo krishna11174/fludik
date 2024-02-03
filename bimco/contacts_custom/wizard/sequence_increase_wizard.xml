@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_my_wizard_form" model="ir.ui.view">
+            <field name="name">my.module.my_wizard.form</field>
+            <field name="model">my.module.my_wizard</field>
+            <field name="arch" type="xml">
+                <form string="My Wizard">
+                    <group>
+                        <field name="name" invisible="1"/>
+                        <field name="notes"/>
+                    </group>
+                    <footer>
+                        <button name="action_no" string="No"  type="object" class="btn-primary"/>
+                        <button name="action_yes" string="Yes"  type="object" class="btn-primary"/>
+<!--                        <button string="Cancel" class="btn-secondary" special="cancel"/>-->
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action to open the wizard -->
+        <record id="action_my_wizard" model="ir.actions.act_window">
+            <field name="name">My Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">my.module.my_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="contacts_custom.view_my_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

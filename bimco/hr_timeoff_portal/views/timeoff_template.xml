@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="menu_timeoff_form" model="website.menu">
+        <field name="name">Create Time Off</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="url">/timeoff</field>
+        <field name="sequence" type="int">210</field>
+    </record>
+
+    <template id="create_timeoff_page" name="Create TimeOff Page">
+        <t t-call="website.layout">
+            <form role="form" action="/timeoff/created" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <div class="container py-5">
+                    <div class="row">
+                        <div class="col-2">
+                            <label for="holiday_status_id">Time Off Type</label>
+                        </div>
+                        <div class="col-4">
+                            <select class="form-control" name="holiday_status_id">
+                                <t t-foreach="holiday_status_id" t-as="holiday">
+                                    <option t-att-value="holiday.id">
+                                        <t t-esc="holiday.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:14px" id="fullday">
+                        <div class="col-2">
+                            <label>Dates</label>
+                        </div>
+                        <div class="col-3 d-flex align-items-center">
+                            <div class="me-2 text-muted">From</div>
+                            <input type="date" class="form-control date" name="request_date_from" id="request_date_from"
+                                   t-attf-value="{{today_date}}"/>
+                        </div>
+                        <div class="col-3 d-flex align-items-center">
+                            <div class="me-2 text-muted">To</div>
+                            <input type="date" class="form-control date" name="request_date_to" id="request_date_to"
+                                   t-attf-value="{{today_date}}"/>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:14px" id="halfday">
+                        <div class="col-2">
+                            <label>Date</label>
+                        </div>
+                        <div class="col-3 d-flex align-items-center">
+                            <input type="date" class="form-control date" name="request_date_from"
+                                   t-attf-value="{{today_date}}"/>
+                        </div>
+                        <div class="col-3 d-flex align-items-center">
+                            <select class="form-control" name="request_date_from_period">
+                                <option t-attf-value='am'>Morning</option>
+                                <option t-attf-value='pm'>Afternoon</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:14px">
+                        <div class="col-2"/>
+                        <div class="col-2">
+                            <input type="checkbox" name="request_unit_half" id="request_unit_half"
+                                   onclick="myFunction()"/>
+                            <label for="request_unit_half">Half Day</label>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:14px" id="days">
+                        <div class="col-2 text-muted">Duration</div>
+                        <div class="col-2 me-2">
+                            <div class="input-group">
+                                <input class="form-control border-0" type="number" name="number_of_days_display"
+                                       id="number_of_days_display"
+                                       value="1.00" readonly="True"/>
+                                <span class="input-group-text border-0">Days</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:14px" id="hours">
+                        <div class="col-2 text-muted">Duration</div>
+                        <div class="col-2 me-2">
+                            <div class="input-group">
+                                <input class="form-control border-0" type="number" value="4" readonly="True"/>
+                                <span class="input-group-text border-0">Hours</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:14px">
+                        <div class="col-2">
+                            <label for="name">Description</label>
+                        </div>
+                        <div class="col-6">
+                            <input type="text" class="form-control" id="name" name="name"
+                                   placeholder="Add a description..."/>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-top:14px">
+                        <div class="col-2">
+                            <label for="supported_attachment_ids">Supporting Document</label>
+                        </div>
+                        <div class="col-3">
+                            <div class="input-group">
+                                <input type="file" name="supported_attachment_ids" multiple="true"
+                                       accept="image/*, application/pdf, .doc, .docx, .txt" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix oe_login_buttons"
+                         style="padding-top: 14px; padding-left:25%; text-align: left;">
+                        <button type="submit" class="btn btn-secondary">Create Time Off</button>
+                    </div>
+                </div>
+                <script>
+                    // Function to handle checkbox click event
+                    function myFunction() {
+                    var checkbox = document.getElementById("request_unit_half");
+                    var fulldayDiv = document.getElementById("fullday");
+                    var halfdayDiv = document.getElementById("halfday");
+                    var daysDiv = document.getElementById("days");
+                    var hoursDiv = document.getElementById("hours");
+                    if (checkbox.checked) {
+                    // Checkbox is checked, hide fullday and duration, show halfday
+                    fulldayDiv.classList.add("d-none");
+                    daysDiv.classList.add("d-none");
+                    hoursDiv.classList.remove("d-none");
+                    halfdayDiv.classList.remove("d-none");
+                    } else {
+                    // Checkbox is not checked, show fullday and duration, hide halfday
+                    fulldayDiv.classList.remove("d-none");
+                    halfdayDiv.classList.add("d-none");
+                    daysDiv.classList.remove("d-none");
+                    hoursDiv.classList.add("d-none");
+                    }
+                    }
+                    // Call the function initially to hide halfday and duration
+                    myFunction();
+                </script>
+                <script>
+                    // Function to update the 'To' date's minimum value
+                    function updateToDateMin() {
+                    const dateFromInput = document.getElementById('request_date_from');
+                    const dateToInput = document.getElementById('request_date_to');
+
+                    dateToInput.min = dateFromInput.value;
+
+                    // Reset the 'To' date if it's less than the 'From' date
+                    if (dateToInput.value &lt; dateFromInput.value) {
+                    dateToInput.value = dateFromInput.value;
+                    }
+
+                    // Calculate and update the duration
+                    updateDuration();
+                    }
+
+                    // Function to calculate and update duration
+                    function updateDuration() {
+                    const dateFromInput = document.getElementById('request_date_from');
+                    const dateToInput = document.getElementById('request_date_to');
+                    const durationInput = document.getElementById('number_of_days_display');
+
+                    const fromDate = new Date(dateFromInput.value);
+                    const toDate = new Date(dateToInput.value);
+
+                    if (isNaN(fromDate) || isNaN(toDate)) {
+                    durationInput.value = '';
+                    return;
+                    }
+
+                    // Calculate the number of days excluding Sunday
+                    let days = 0;
+                    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+
+                    while (fromDate &lt;= toDate) {
+                    const dayOfWeek = fromDate.getDay();
+                    if (dayOfWeek !== 0) { // Exclude Sundays (Sunday is day 0)
+                    days++;
+                    }
+
+                    fromDate.setTime(fromDate.getTime() + millisecondsPerDay);
+                    }
+
+                    // Display the value with two decimal places
+                    durationInput.value = days.toFixed(2);
+                    }
+
+                    // Attach the combined functions to the 'From' and 'To' date change events
+                    const dateFromInput = document.getElementById('request_date_from');
+                    const dateToInput = document.getElementById('request_date_to');
+                    dateFromInput.addEventListener('input', updateToDateMin);
+                    dateToInput.addEventListener('input', updateToDateMin);
+                </script>
+            </form>
+        </t>
+    </template>
+
+    <record id="timeoff_created_thanks_page" model="website.page">
+        <field name="name">Thanks</field>
+        <field name="type">qweb</field>
+        <field name="url">/timeoff-created</field>
+        <field name="website_published">True</field>
+        <field name="key">hr_timeoff_portal.timeoff_created_thanks_page</field>
+        <field name="arch" type="xml">
+            <t name="Thanks" t-name="hr_timeoff_portal.timeoff_created_thanks_page">
+                <t t-call="website.layout">
+                    <div id="wrap">
+                        <div class="container pt-4">
+                            <h1>Thanks!</h1>
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div class="alert alert-success" role="status">
+                                        Your Time Off has been created successfully.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </field>
+    </record>
+
+</odoo>

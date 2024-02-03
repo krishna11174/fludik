@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_bom_wizard_form" model="ir.ui.view">
+            <field name="name">view.bom.wizard.form</field>
+            <field name="model">bom.my_wizard</field>
+            <field name="arch" type="xml">
+                <form string="My Wizard">
+                   <b><p>Do you want to increase the initial number ?</p></b>
+                    <footer>
+                        <button name="action_no" string="No"  type="object" class="btn-secondary"/>
+                        <button name="action_yes" string="Yes"  type="object" class="btn-primary"/>
+<!--                        <button string="Cancel" class="btn-secondary" special="cancel"/>-->
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_wizard_bom" model="ir.actions.act_window">
+            <field name="name">My Wizard Bom</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">bom.my_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="contacts_custom.view_bom_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

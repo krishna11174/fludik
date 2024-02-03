@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+
+<!--    <record id="manufacturing_order_seq" model="ir.sequence">-->
+<!--        <field name="name">Details changes seq</field>-->
+<!--        <field name="code">mrp.production.new</field>-->
+<!--        <field name="prefix">MO</field>-->
+<!--        <field name="suffix"></field>-->
+<!--        <field name="padding">5</field>-->
+<!--        <field name="company_id" eval="False"/>-->
+<!--    </record>-->
+
+
+    <record id="manufacturing_add_field_boolaean" model="ir.ui.view">
+        <field name="name">Manufacturing Add Boolean Field</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="is_changed"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

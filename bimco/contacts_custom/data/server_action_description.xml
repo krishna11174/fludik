@@ -1,0 +1,27 @@
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+
+<record id="action_product_description_wizard" model="ir.actions.server">
+    <field name="name">Product Description Wizard</field>
+    <field name="model_id" ref="model_product_template"/>
+    <field name="state">code</field>
+    <field name="code">
+        <![CDATA[
+            if context.get('active_model') == 'product.template' and context.get('active_id'):
+                product_template = env['product.template'].browse(context['active_id'])
+                old_description = product_template._origin.description if product_template._origin else False
+                new_description = product_template.description
+                if old_description != new_description:
+                    return {
+                        'name': "My Wizard",
+                        'type': 'ir.actions.act_window',
+                        'res_model': 'my.module.my_wizard',
+                        'view_mode': 'form',
+                        'view_id': self.env.ref('contacts_custom.view_my_wizard_form').id,
+                        'target': 'new',
+                        'context': {
+                            'default_name': product_template.name,
+                        }
+                    }
+        ]]>
+    </field>
+</record>
